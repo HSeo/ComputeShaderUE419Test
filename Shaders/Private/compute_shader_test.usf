@@ -1,0 +1,34 @@
+// Copyright (c) 2018 Hirofumi Seo, M.D. at SCIEMENT, Inc.
+// http://www.sciement.com
+// http://www.sciement.com/tech-blog/
+
+#pragma once
+
+// Necessary to use UNIFORM_BUFFER_STRUCT
+#include "/Engine/Private/Common.ush"
+
+// UNIFORM_BUFFER_STRUCT is not available outside the fuction of IMPLEMENT_SHADER_TYPE's FunctionName.
+// So, we can't use UNIFORM_BUFFER_STRUCT like global StructuredBuffer<UNIFORM_BUFFER_STRUCT>
+
+/*
+//TestComputeShader.h
+BEGIN_UNIFORM_BUFFER_STRUCT(OffsetYZ, )
+DECLARE_UNIFORM_BUFFER_STRUCT_MEMBER(float, y)
+DECLARE_UNIFORM_BUFFER_STRUCT_MEMBER(float, z)
+END_UNIFORM_BUFFER_STRUCT(OffsetYZ)
+
+//TestComputeShader.cpp
+IMPLEMENT_UNIFORM_BUFFER_STRUCT(OffsetYZ, TEXT("offset_yz"))
+*/
+
+StructuredBuffer<float3> test_input_position; // FVector in cpp
+StructuredBuffer<float> test_input_scalar;
+RWStructuredBuffer<float3> test_output;
+
+float test_offset_x;
+float test;
+
+[numthreads(1, 1, 1)]
+void CalculateOutput(int3 dispatch_id : SV_DispatchThreadID) {
+  test_output[dispatch_id.x] = test_input_position[dispatch_id.x] * test_input_scalar[dispatch_id.x] + float3(test_offset_x, offset_yz.y, offset_yz.z);
+}
